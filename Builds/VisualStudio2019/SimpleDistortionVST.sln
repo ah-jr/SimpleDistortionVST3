@@ -1,0 +1,30 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 11.00
+# Visual Studio Version 16
+
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "SimpleDistortionVST - VST3", "SimpleDistortionVST_VST3.vcxproj", "{1D583157-8E4E-5F11-E5C4-F94EA8AF75F8}"
+	ProjectSection(ProjectDependencies) = postProject
+		{119ECCEA-6AD8-EA80-7978-18D49D94AD54} = {119ECCEA-6AD8-EA80-7978-18D49D94AD54}
+	EndProjectSection
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "SimpleDistortionVST - Shared Code", "SimpleDistortionVST_SharedCode.vcxproj", "{119ECCEA-6AD8-EA80-7978-18D49D94AD54}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|x64 = Debug|x64
+		Release|x64 = Release|x64
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{1D583157-8E4E-5F11-E5C4-F94EA8AF75F8}.Debug|x64.ActiveCfg = Debug|x64
+		{1D583157-8E4E-5F11-E5C4-F94EA8AF75F8}.Debug|x64.Build.0 = Debug|x64
+		{1D583157-8E4E-5F11-E5C4-F94EA8AF75F8}.Release|x64.ActiveCfg = Release|x64
+		{1D583157-8E4E-5F11-E5C4-F94EA8AF75F8}.Release|x64.Build.0 = Release|x64
+		{119ECCEA-6AD8-EA80-7978-18D49D94AD54}.Debug|x64.ActiveCfg = Debug|x64
+		{119ECCEA-6AD8-EA80-7978-18D49D94AD54}.Debug|x64.Build.0 = Debug|x64
+		{119ECCEA-6AD8-EA80-7978-18D49D94AD54}.Release|x64.ActiveCfg = Release|x64
+		{119ECCEA-6AD8-EA80-7978-18D49D94AD54}.Release|x64.Build.0 = Release|x64
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
