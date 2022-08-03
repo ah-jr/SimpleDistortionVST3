@@ -22,7 +22,47 @@ SimpleDistortionVSTAudioProcessor::SimpleDistortionVSTAudioProcessor()
                        )
 #endif
 {
-    state = std::make_unique<juce::AudioProcessorValueTreeState>(*this, nullptr);
+    state = std::make_unique<juce::AudioProcessorValueTreeState>(*this, nullptr, "Parameters", createParameterLayout());
+    //state = std::make_unique<juce::AudioProcessorValueTreeState>(*this, nullptr);
+
+    //state->createAndAddParameter("drive", "Drive", "Drive", 
+    //                             juce::NormalisableRange<float>(0.f, 1.f, 0.001), 
+    //                             1.f, nullptr, nullptr);
+
+    //state->createAndAddParameter("range", "Range", "Range", 
+    //                             juce::NormalisableRange<float>(0.f, 3000.f, 0.001), 
+    //                             1.f, nullptr, nullptr);
+
+    //state->createAndAddParameter("blend", "Blend", "Blend",
+    //                             juce::NormalisableRange<float>(0.f, 1.f, 0.001),
+    //                             1.f, nullptr, nullptr);
+
+    //state->createAndAddParameter("volume", "Volume", "Volume",
+    //                             juce::NormalisableRange<float>(0.f, 3.f, 0.001),
+    //                             1.f, nullptr, nullptr);
+
+    //state->state = juce::ValueTree("drive");
+    //state->state = juce::ValueTree("range");
+    //state->state = juce::ValueTree("blend");
+    //state->state = juce::ValueTree("volume");
+
+}
+
+juce::AudioProcessorValueTreeState::ParameterLayout SimpleDistortionVSTAudioProcessor::createParameterLayout() 
+{
+    std::vector <std::unique_ptr<juce::RangedAudioParameter>> params;
+
+    auto drive = std::make_unique <juce::AudioParameterFloat>("drive", "Drive", 0.f, 1.0f, 1.0f);
+    auto range = std::make_unique <juce::AudioParameterFloat>("range", "Range", 0.f, 3000.0f, 1.0f);
+    auto blend = std::make_unique <juce::AudioParameterFloat>("blend", "Blend", 0.f, 1.0f, 1.0f);
+    auto volume = std::make_unique <juce::AudioParameterFloat>("volume", "Volume", 0.f, 3.0f, 1.0f);
+
+    params.push_back(std::move(drive));
+    params.push_back(std::move(range));
+    params.push_back(std::move(blend));
+    params.push_back(std::move(volume));
+
+    return { params.begin(), params.end() };
 }
 
 SimpleDistortionVSTAudioProcessor::~SimpleDistortionVSTAudioProcessor()
@@ -136,26 +176,31 @@ void SimpleDistortionVSTAudioProcessor::processBlock (juce::AudioBuffer<float>& 
     auto totalNumInputChannels  = getTotalNumInputChannels();
     auto totalNumOutputChannels = getTotalNumOutputChannels();
 
-    // In case we have more outputs than inputs, this code clears any output
-    // channels that didn't contain input data, (because these aren't
-    // guaranteed to be empty - they may contain garbage).
-    // This is here to avoid people getting screaming feedback
-    // when they first compile a plugin, but obviously you don't need to keep
-    // this code if your algorithm always overwrites all the output channels.
     for (auto i = totalNumInputChannels; i < totalNumOutputChannels; ++i)
         buffer.clear (i, 0, buffer.getNumSamples());
 
-    // This is the place where you'd normally do the guts of your plugin's
-    // audio processing...
-    // Make sure to reset the state if your inner loop is processing
-    // the samples and the outer loop is handling the channels.
-    // Alternatively, you can process the samples with the channels
-    // interleaved by keeping the same state.
+    float drive  = *state->getRawParameterValue("drive");
+    float range  = *state->getRawParameterValue("range");
+    float blend  = *state->getRawParameterValue("blend");
+    float volume = *state->getRawParameterValue("volume");
+
+
     for (int channel = 0; channel < totalNumInputChannels; ++channel)
     {
         auto* channelData = buffer.getWritePointer (channel);
+        float sampleProc, sampleClean, sampleOutput;
 
-        // ..do something to the data...
+        for (int sample = 0; sample < buffer.getNumSamples(); sample++)
+        {
+            sampleProc  = channelData[sample];
+            sampleClean = channelData[sample];
+
+            sampleProc = sampleProc * drive * range;
+            sampleProc = (2.f / M_PI) * atan(sampleProc);
+            sampleOutput = blend * sampleProc + (1 - blend) * sampleClean;
+
+            channelData[sample] = volume * sampleOutput;
+        }
     }
 }
 
@@ -183,12 +228,21 @@ void SimpleDistortionVSTAudioProcessor::getStateInformation (juce::MemoryBlock& 
     // You should use this method to store your parameters in the memory block.
     // You could do that either as raw data, or use the XML or ValueTree classes
     // as intermediaries to make it easy to save and load complex data.
+
+    juce::MemoryOutputStream stream(destData, false);
+    state->state.writeToStream(stream);
 }
 
 void SimpleDistortionVSTAudioProcessor::setStateInformation (const void* data, int sizeInBytes)
 {
     // You should use this method to restore your parameters from this memory block,
     // whose contents will have been created by the getStateInformation() call.
+
+    juce::ValueTree tree = juce::ValueTree::readFromData(data, sizeInBytes);
+
+    if (tree.isValid()) {
+        state->state = tree;
+    }
 }
 
 //==============================================================================

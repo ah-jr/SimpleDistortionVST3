@@ -25,9 +25,15 @@ public:
     void resized() override;
 
 private:
-    std::unique_ptr<juce::Slider> knob[4];
+    std::unique_ptr<juce::Slider> driveKnob;
+    std::unique_ptr<juce::Slider> rangeKnob;
+    std::unique_ptr<juce::Slider> blendKnob;
+    std::unique_ptr<juce::Slider> volumeKnob;
 
-    std::unique_ptr<juce::AudioProcessorValueTreeState::SliderAttachment> attachment[4];
+    std::unique_ptr<juce::AudioProcessorValueTreeState::SliderAttachment> driveAttachment;
+    std::unique_ptr<juce::AudioProcessorValueTreeState::SliderAttachment> rangeAttachment;
+    std::unique_ptr<juce::AudioProcessorValueTreeState::SliderAttachment> blendAttachment;
+    std::unique_ptr<juce::AudioProcessorValueTreeState::SliderAttachment> volumeAttachment;
 
     // This reference is provided as a quick way for your editor to
     // access the processor object that created it.

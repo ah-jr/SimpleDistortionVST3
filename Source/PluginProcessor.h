@@ -8,7 +8,10 @@
 
 #pragma once
 
+#define _USE_MATH_DEFINES
+
 #include <JuceHeader.h>
+#include <math.h>
 
 //==============================================================================
 /**
@@ -22,6 +25,8 @@ public:
     //==============================================================================
     SimpleDistortionVSTAudioProcessor();
     ~SimpleDistortionVSTAudioProcessor() override;
+
+    juce::AudioProcessorValueTreeState::ParameterLayout createParameterLayout();
 
     //==============================================================================
     void prepareToPlay (double sampleRate, int samplesPerBlock) override;

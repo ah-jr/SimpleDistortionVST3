@@ -13,34 +13,39 @@
 SimpleDistortionVSTAudioProcessorEditor::SimpleDistortionVSTAudioProcessorEditor (SimpleDistortionVSTAudioProcessor& p)
     : AudioProcessorEditor (&p), audioProcessor (p)
 {
-    /*
-    Knobs indexes:
-        1. Drive
-        2. Range
-        3. Blend
-        4. Volume
-    */
+ 
+    driveKnob = std::make_unique<juce::Slider>("Drive");
+    addAndMakeVisible(*driveKnob);
+    driveKnob->setSliderStyle(juce::Slider::Rotary);
+    driveKnob->setTextBoxStyle(juce::Slider::NoTextBox, false, 100, 100);
 
-    for (int i = 0; i < 4; i++) {
-        std::string name;
+    rangeKnob = std::make_unique<juce::Slider>("Drive");
+    addAndMakeVisible(*rangeKnob);
+    rangeKnob->setSliderStyle(juce::Slider::Rotary);
+    rangeKnob->setTextBoxStyle(juce::Slider::NoTextBox, false, 100, 100);
 
-        switch (i)
-        {
-        case 0: {name = "Drive";  break;}
-        case 1: {name = "Range";  break;}
-        case 2: {name = "Blend";  break;}
-        case 3: {name = "Volume"; break;}
-        default: {break;}
-        }
+    blendKnob = std::make_unique<juce::Slider>("Drive");
+    addAndMakeVisible(*blendKnob);
+    blendKnob->setSliderStyle(juce::Slider::Rotary);
+    blendKnob->setTextBoxStyle(juce::Slider::NoTextBox, false, 100, 100);
 
-        knob[i] = std::make_unique<juce::Slider>(name);
-        addAndMakeVisible(*knob[i]);
-        knob[i]->setSliderStyle(juce::Slider::Rotary);
-        knob[i]->setTextBoxStyle(juce::Slider::NoTextBox, false, 100, 100);
+    volumeKnob = std::make_unique<juce::Slider>("Drive");
+    addAndMakeVisible(*volumeKnob);
+    volumeKnob->setSliderStyle(juce::Slider::Rotary);
+    volumeKnob->setTextBoxStyle(juce::Slider::NoTextBox, false, 100, 100);
 
-        attachment[i] = std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(p.getState(), name, *knob[i]);
+    driveAttachment = std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(p.getState(), 
+        "drive", *driveKnob);
 
-    }
+    rangeAttachment = std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(p.getState(),
+        "range", *rangeKnob);
+
+    blendAttachment = std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(p.getState(),
+        "blend", *blendKnob);
+
+    volumeAttachment = std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(p.getState(),
+        "volume", *volumeKnob);
+
 
     // Make sure that before the constructor has finished, you've set the
     // editor's size to whatever you need it to be.
@@ -72,10 +77,16 @@ void SimpleDistortionVSTAudioProcessorEditor::resized()
     int width = 100;
     int height = 100;
 
-    for (int i = 0; i < 4; i++)
-    {
-        x = (i + 1) * (getWidth() / 5) - (100 / 2);
-        knob[i]->setBounds(x, y, width, height);
-    }
+    x = 1 * (getWidth() / 5) - (100 / 2);
+    driveKnob->setBounds(x, y, width, height);
+
+    x = 2 * (getWidth() / 5) - (100 / 2);
+    rangeKnob->setBounds(x, y, width, height);
+
+    x = 3 * (getWidth() / 5) - (100 / 2);
+    blendKnob->setBounds(x, y, width, height);
+
+    x = 4 * (getWidth() / 5) - (100 / 2);
+    volumeKnob->setBounds(x, y, width, height);
 }
  
